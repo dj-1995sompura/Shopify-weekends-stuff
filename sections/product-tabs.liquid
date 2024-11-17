@@ -1,0 +1,77 @@
+{{'custom-dev.css' | asset_url | stylesheet_tag }}
+
+<section class="page-width">
+    <div class="top-content">
+        <h1 class="title">{{ section.settings.title }}</h1>
+        <p class="sub-title">{{ section.settings.sub_title }}</p>
+    </div>
+<div class="tabs-container">
+    <div class="tabs">
+      <div class="tab-links">
+        {% for block in section.blocks %}
+            {% assign  collection = block.settings.collection %}
+            {% assign main_collection = collections[collection]%}
+        <button class="tab-link {% if forloop.index == 1 %}active{% endif %}" data-tab="{{ main_collection.title | downcase | replace:' ','_' }}"><i class="fas fa-info-circle"></i> {{ main_collection.title }}</button>
+        {% endfor %}
+        {% comment %} <button class="tab-link" data-tab="tab-2"><i class="fas fa-list"></i> Details</button>
+        <button class="tab-link" data-tab="tab-3"><i class="fas fa-envelope"></i> Contact</button>
+        <button class="tab-link" data-tab="tab-4"><i class="fas fa-question-circle"></i> FAQ</button> {% endcomment %}
+      </div>
+
+      {% for block in section.blocks %}
+        {% assign  collection = block.settings.collection %}
+        {% assign main_collection = collections[collection]%}
+      <div class="tab-content {% if forloop.index == 1 %}active{% endif %}" id="{{ main_collection.title | downcase | replace:' ','_' }}">
+        <div class="grid product- grid--3-col-desktop">
+        {% for product in main_collection.products  limit:6 %}
+        <div class="grid__item">  
+        {% render 'card-product',
+          card_product: product,
+          section_id: section.id
+        %}
+        </div>
+        {% endfor %}
+      </div>
+      </div>
+      {% endfor %}
+    </div>
+</div>
+</section>
+
+{{ 'custom-dev.js' | asset_url | script_tag }}
+{% schema %}
+  {
+  "name": "Product Tabs",
+  "class": "product-tab",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "sub_title",
+      "label": "Sub Title"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Collection",
+      "type": "collection",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Tabs"
+    }
+  ]
+}  
+{% endschema %}
